@@ -4,7 +4,7 @@ pragma solidity =0.8.25;
 import { OwnableUpgradeable } from "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
 import { Initializable } from "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
 
-import { IKeyGenHistory } from "diamond-contracts-core/interfaces/IKeyGenHistory.sol";
+import { IKeyGenHistory } from "diamond-contracts-core/contracts/interfaces/IKeyGenHistory.sol";
 
 import { IBlockRewardHbbft } from "./interfaces/IBlockRewardHbbft.sol";
 import { IStakingHbbftExtended } from "./interfaces/IStakingHbbftExtended.sol";

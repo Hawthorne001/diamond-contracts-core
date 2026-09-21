@@ -88,12 +88,11 @@ See the [CONTRIBUTING](CONTRIBUTING.md) document for contribution, testing and p
 
 ## License
 
-Licensed under either of:
+Licensed under:
 
 - Apache License, Version 2.0, ([LICENSE-APACHE](LICENSE-APACHE) or <http://www.apache.org/licenses/LICENSE-2.0>)
-- MIT license ([LICENSE-MIT](LICENSE-MIT) or <http://opensource.org/licenses/MIT>)
+- GNU GPL v3.0 License or later ([LICENSE-GPL](LICENSE-GPL) or <https://www.gnu.org/licenses/gpl-3.0.en.html#license-text>)
 
-at your option.
 
 [coveralls]: https://coveralls.io/github/DMDcoin/diamond-contracts-core?branch=master
 [coveralls-badge]: https://coveralls.io/repos/github/DMDcoin/diamond-contracts-core/badge.svg?branch=master

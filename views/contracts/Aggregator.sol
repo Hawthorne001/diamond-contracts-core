@@ -3,8 +3,8 @@ pragma solidity =0.8.25;
 
 import { Ownable } from "@openzeppelin/contracts/access/Ownable.sol";
 
-import { IKeyGenHistory } from "diamond-contracts-core/interfaces/IKeyGenHistory.sol";
-import { DaoPhase, Proposal, VotingResult } from "diamond-contracts-dao/library/DaoStructs.sol";
+import { IKeyGenHistory } from "diamond-contracts-core/contracts/interfaces/IKeyGenHistory.sol";
+import { DaoPhase, Proposal, VotingResult } from "diamond-contracts-dao/contracts/library/DaoStructs.sol";
 
 import { IBlockRewardHbbft } from "./interfaces/IBlockRewardHbbft.sol";
 import { IBonusScoreSystem } from "./interfaces/IBonusScoreSystem.sol";

@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 pragma solidity =0.8.25;
 
-import { DaoPhase, Proposal, VotingResult } from "diamond-contracts-dao/library/DaoStructs.sol";
+import { DaoPhase, Proposal, VotingResult } from "diamond-contracts-dao/contracts/library/DaoStructs.sol";
 
 interface IDiamondDao {
     function proposalExists(uint256 proposalId) external view returns (bool);

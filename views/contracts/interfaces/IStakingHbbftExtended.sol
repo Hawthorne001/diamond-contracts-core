@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 pragma solidity =0.8.25;
 
-import { IStakingHbbft } from "diamond-contracts-core/interfaces/IStakingHbbft.sol";
+import { IStakingHbbft } from "diamond-contracts-core/contracts/interfaces/IStakingHbbft.sol";
 
 interface IStakingHbbftExtended is IStakingHbbft {
     function getPools() external view returns (address[] memory);
