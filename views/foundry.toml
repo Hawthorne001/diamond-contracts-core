@@ -2,16 +2,14 @@
 extends = "../foundry.base.toml"
 src = "contracts"
 out = "out"
-libs = ["../lib"]
+libs = ["node_modules", "../lib"]
 no_match_coverage = "contracts/mocks/.*|scripts/*"
 
 remappings = [
     "forge-std/=../lib/forge-std/src/",
-    "@openzeppelin/contracts/=../lib/openzeppelin-contracts/contracts/",
-    "@openzeppelin/contracts-upgradeable/=../lib/openzeppelin-contracts-upgradeable/contracts/",
-    "openzeppelin-foundry-upgrades/=../lib/openzeppelin-foundry-upgrades/src/",
-    "diamond-contracts-core/=../core/contracts/",
-    "diamond-contracts-dao/=../dao/contracts/",
+    "@openzeppelin/contracts/=node_modules/@openzeppelin/contracts/",
+    "@openzeppelin/contracts-upgradeable/=node_modules/@openzeppelin/contracts-upgradeable/",
+    "openzeppelin-foundry-upgrades/=node_modules/@openzeppelin/foundry-upgrades/src/",
 ]
 
 [fmt]

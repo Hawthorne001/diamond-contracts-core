@@ -4,12 +4,11 @@
     "description": "Staking and Hbbft shared key management for DMD Diamond",
     "type": "module",
     "scripts": {
-        "compile": "pnpm hardhat build",
+        "build": "pnpm hardhat build",
         "test": "pnpm run clean && pnpm hardhat test",
         "coverage": "pnpm run clean && pnpm hardhat test --coverage",
-        "docs-build": "forge doc",
         "clean": "pnpm hardhat clean",
-        "flat": "bash ../scripts/flatten.sh ./contracts",
+        "docs-build": "forge doc",
         "mythril": "pnpm run flat && bash ../scripts/run_mythril.sh ./flat",
         "solhint": "./node_modules/.bin/solhint -f table 'contracts/**/*.sol'",
         "solhint:ci": "./node_modules/.bin/solhint --disc --max-warnings 0 -f compact 'contracts/**/*.sol' > /dev/null",
@@ -29,6 +28,10 @@
         "url": "https://github.com/DMDcoin/contracts-monorepo/issues"
     },
     "homepage": "https://github.com/DMDcoin/contracts-monorepo/core#readme",
+    "dependencies": {
+        "@openzeppelin/contracts": "5.0.2",
+        "@openzeppelin/contracts-upgradeable": "5.0.2"
+    },
     "devDependencies": {
         "@nomicfoundation/hardhat-foundry": "^3.0.4",
         "@nomicfoundation/hardhat-ledger": "^3.0.10",
@@ -37,8 +40,6 @@
         "@nomicfoundation/hardhat-toolbox-viem": "^5.0.7",
         "@nomicfoundation/hardhat-viem": "^3.0.9",
         "@nomicfoundation/hardhat-viem-assertions": "^3.1.2",
-        "@openzeppelin/contracts": "5.0.2",
-        "@openzeppelin/contracts-upgradeable": "5.0.2",
         "@solidstate/hardhat-contract-sizer": "^3.0.3",
         "@types/fs-extra": "^11.0.4",
         "@types/mocha": "^10.0.10",

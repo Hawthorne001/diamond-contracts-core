@@ -1,0 +1,12 @@
+{
+    "extends": "../tsconfig.json",
+    "compilerOptions": {
+        "lib": ["ES2020", "DOM"],
+        "skipLibCheck": true
+    },
+    "files": ["./hardhat.config.ts"],
+    "include": [
+        "./scripts/**/*.ts",
+        "./utils/**/*.ts"
+    ]
+}

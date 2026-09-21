@@ -4,15 +4,51 @@
     "description": "DMD Diamond view contracts",
     "type": "module",
     "scripts": {
-        "build": "forge build",
-        "test": "forge test",
+        "build": "pnpm run build:hardhat && pnpm run build:forge",
+        "build:hardhat": "hardhat build",
+        "build:forge": "forge build",
+        "test": "pnpm run test:hardhat && pnpm run test:forge",
+        "test:hardhat": "hardhat test",
+        "test:forge": "forge test",
         "coverage": "forge coverage",
-        "clean": "forge clean",
-        "lint": "forge fmt --check"
+        "clean": "hardhat clean && forge clean",
+        "lint": "forge fmt --check",
+        "type-check": "tsc --noEmit -p tsconfig.json",
+        "deploy": "hardhat run scripts/deploy.ts",
+        "deploy:proxy": "hardhat run scripts/deployProxy.ts",
+        "spec": "hardhat run scripts/deployForChainSpec.ts",
+        "spec:proxy": "hardhat run scripts/deployProxyForChainSpec.ts",
+        "print-data": "hardhat run scripts/printData.ts"
     },
     "repository": {
         "type": "git",
         "url": "git+https://github.com/DMDcoin/contracts-monorepo.git",
         "directory": "views"
+    },
+    "author": "bit.diamonds developers",
+    "license": "GPL-3.0-or-later",
+    "bugs": {
+        "url": "https://github.com/DMDcoin/contracts-monorepo/issues"
+    },
+    "homepage": "https://github.com/DMDcoin/contracts-monorepo/views#readme",
+    "dependencies": {
+        "@openzeppelin/contracts": "5.0.2",
+        "@openzeppelin/contracts-upgradeable": "5.0.2",
+        "diamond-contracts-core": "workspace:*",
+        "diamond-contracts-dao": "workspace:*"
+    },
+    "devDependencies": {
+        "@nomicfoundation/hardhat-ethers": "^4.0.0",
+        "@nomicfoundation/hardhat-ledger": "^3.0.10",
+        "@nomicfoundation/hardhat-verify": "^3.0.10",
+        "@openzeppelin/foundry-upgrades": "0.4.1",
+        "@openzeppelin/hardhat-upgrades": "4.1.0",
+        "@solidstate/hardhat-contract-sizer": "^3.0.3",
+        "@types/node": "^26.1.1",
+        "ethers": "^6.14.0",
+        "forge-std": "link:../lib/forge-std",
+        "hardhat": "^3.9.1",
+        "solc": "0.8.25",
+        "typescript": "^7.0.2"
     }
 }
