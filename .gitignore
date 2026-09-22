@@ -18,6 +18,11 @@
 # foundry specific files
 **/out/
 
+# static analysis reports
+**/solhint_report.sarif
+**/slither_report.sarif
+**/results.sarif
+
 # Emacs backups
 \#*#
 .#*

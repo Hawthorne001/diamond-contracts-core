@@ -9,14 +9,14 @@
         "coverage": "pnpm run clean && pnpm hardhat test --coverage",
         "clean": "pnpm hardhat clean",
         "docs-build": "forge doc",
-        "mythril": "pnpm run flat && bash ../scripts/run_mythril.sh ./flat",
-        "solhint": "./node_modules/.bin/solhint -f table 'contracts/**/*.sol'",
-        "solhint:ci": "./node_modules/.bin/solhint --disc --max-warnings 0 -f compact 'contracts/**/*.sol' > /dev/null",
-        "solhint:sarif-report": "./node_modules/.bin/solhint --disc -f sarif 'contracts/**/*.sol' > solhint_report.sarif",
-        "getFunctionSignatures": "node ../scripts/getFunctionSignatures.js",
-        "oz-manifest": "npx hardhat run --network hardhat ../scripts/generateNetworkManifest.ts",
-        "spec": "npm run oz-manifest && npx hardhat make_spec_hbbft --init-contracts ../initial-contracts.json --use-upgrade-proxy init-data.json",
-        "type-check": "npx tsc --noEmit 2>&1 | grep test/"
+        "lint": "pnpm run solhint:ci",
+        "solhint": "./node_modules/.bin/solhint -f table --ignore-path ../.solhintignore 'contracts/**/*.sol'",
+        "solhint:ci": "./node_modules/.bin/solhint --disc --max-warnings 0 -f compact --ignore-path ../.solhintignore 'contracts/**/*.sol'",
+        "solhint:sarif-report": "./node_modules/.bin/solhint --disc -f sarif --ignore-path ../.solhintignore 'contracts/**/*.sol' > solhint_report.sarif",
+        "type-check": "tsc --noEmit -p tsconfig.json",
+        "spec": "pnpm hardhat make_spec_hbbft --init-contracts ../initial-contracts.json --use-upgrade-proxy init-data.json",
+        "flat": "bash ../scripts/flatten.sh ./contracts",
+        "mythril": "pnpm run flat && bash ../scripts/run_mythril.sh ./flat"
     },
     "repository": {
         "type": "git",
@@ -24,6 +24,7 @@
         "directory": "core"
     },
     "author": "thomashaller@gmx.at",
+    "license": "Apache-2.0",
     "bugs": {
         "url": "https://github.com/DMDcoin/contracts-monorepo/issues"
     },

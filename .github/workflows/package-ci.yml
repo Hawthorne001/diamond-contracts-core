@@ -1,0 +1,71 @@
+name: Package CI
+
+on:
+  workflow_call:
+    inputs:
+      package:
+        description: Workspace package directory to build, lint and test.
+        required: true
+        type: string
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    name: build & test
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    env:
+      PACKAGE: ${{ inputs.package }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        with:
+          persist-credentials: false
+          submodules: recursive
+
+      - name: Install Foundry
+        uses: foundry-rs/foundry-toolchain@908c540300062bd5a7e473851cdb4282204cee09 # v1
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@0977fd99725f1db4007ccb2928dbb4e90d06cc86 # v6
+
+      - name: Install Node.js
+        uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
+        with:
+          node-version-file: .nvmrc
+          cache: pnpm
+          cache-dependency-path: pnpm-lock.yaml
+
+      - name: Cache Solidity compilers
+        uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 # v4
+        with:
+          path: ~/.cache/hardhat-nodejs
+          key: hardhat-compilers-${{ runner.os }}-${{ hashFiles('hardhat.base.ts') }}
+          restore-keys: hardhat-compilers-${{ runner.os }}-
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Type-check
+        run: pnpm --dir "$PACKAGE" run type-check
+
+      - name: Lint
+        run: pnpm --dir "$PACKAGE" run lint
+
+      - name: Build
+        run: pnpm --dir "$PACKAGE" run build
+
+      - name: Test with coverage
+        run: pnpm --dir "$PACKAGE" run coverage
+
+      - name: Upload coverage to Coveralls
+        if: hashFiles(format('{0}/coverage/lcov.info', inputs.package)) != ''
+        uses: coverallsapp/github-action@8d6379e14d29928660c4ba802d8e85393440b329 # v2
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          file: ${{ inputs.package }}/coverage/lcov.info
+          base-path: ${{ inputs.package }}
+          flag-name: ${{ inputs.package }}
+          parallel: true

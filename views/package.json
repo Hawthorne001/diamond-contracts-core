@@ -4,21 +4,16 @@
     "description": "DMD Diamond view contracts",
     "type": "module",
     "scripts": {
-        "build": "pnpm run build:hardhat && pnpm run build:forge",
-        "build:hardhat": "hardhat build",
-        "build:forge": "forge build",
-        "test": "pnpm run test:hardhat && pnpm run test:forge",
-        "test:hardhat": "hardhat test",
-        "test:forge": "forge test",
-        "coverage": "forge coverage",
-        "clean": "hardhat clean && forge clean",
-        "lint": "forge fmt --check",
-        "type-check": "tsc --noEmit -p tsconfig.json",
-        "deploy": "hardhat run scripts/deploy.ts",
-        "deploy:proxy": "hardhat run scripts/deployProxy.ts",
-        "spec": "hardhat run scripts/deployForChainSpec.ts",
-        "spec:proxy": "hardhat run scripts/deployProxyForChainSpec.ts",
-        "print-data": "hardhat run scripts/printData.ts"
+        "build": "pnpm hardhat build --force",
+        "test": "pnpm run clean && pnpm hardhat test",
+        "coverage": "pnpm run clean && pnpm hardhat test --coverage",
+        "clean": "pnpm hardhat clean",
+        "docs-build": "forge doc",
+        "lint": "pnpm run solhint:ci",
+        "solhint": "./node_modules/.bin/solhint -f table --ignore-path ../.solhintignore 'contracts/**/*.sol'",
+        "solhint:ci": "./node_modules/.bin/solhint --disc --max-warnings 0 -f compact --ignore-path ../.solhintignore 'contracts/**/*.sol'",
+        "solhint:sarif-report": "./node_modules/.bin/solhint --disc -f sarif --ignore-path ../.solhintignore 'contracts/**/*.sol' > solhint_report.sarif",
+        "type-check": "tsc --noEmit -p tsconfig.json"
     },
     "repository": {
         "type": "git",
@@ -49,6 +44,7 @@
         "forge-std": "link:../lib/forge-std",
         "hardhat": "^3.9.1",
         "solc": "0.8.25",
+        "solhint": "^6.2.4",
         "typescript": "^7.0.2"
     }
 }

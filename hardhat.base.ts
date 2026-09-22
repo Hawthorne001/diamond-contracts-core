@@ -57,7 +57,6 @@ export function createBaseConfig({
                 allowUnlimitedContractSize: true,
                 hardfork: "istanbul",
                 minGasPrice: 0,
-                gasPrice: 0,
             },
             mainnet: {
                 type: "http",

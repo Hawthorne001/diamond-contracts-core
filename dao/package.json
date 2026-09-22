@@ -4,16 +4,16 @@
     "description": "DMD DAO contracts",
     "type": "module",
     "scripts": {
-        "build": "pnpm hardhat build",
+        "build": "pnpm hardhat build --force",
         "test": "pnpm run clean && pnpm hardhat test",
         "coverage": "pnpm run clean && pnpm hardhat test --coverage",
         "clean": "pnpm hardhat clean",
-        "deployForDaoUpgrade": "npx hardhat run scripts/deployForDaoUpgrade.ts",
-        "switchPhase": "npx hardhat run scripts/switchPhase.ts",
-        "clean-install": "rm -f package-lock.json && rm -rf node_modules/diamond-contracts-core && npm install",
-        "solhint": "./node_modules/.bin/solhint -f table 'contracts/**/*.sol'",
-        "solhint:ci": "./node_modules/.bin/solhint --disc --max-warnings 0 -f compact 'contracts/**/*.sol' > /dev/null",
-        "solhint:sarif-report": "./node_modules/.bin/solhint --disc -f sarif 'contracts/**/*.sol' > solhint_report.sarif"
+        "docs-build": "forge doc",
+        "lint": "pnpm run solhint:ci",
+        "solhint": "./node_modules/.bin/solhint -f table --ignore-path ../.solhintignore 'contracts/**/*.sol'",
+        "solhint:ci": "./node_modules/.bin/solhint --disc --max-warnings 0 -f compact --ignore-path ../.solhintignore 'contracts/**/*.sol'",
+        "solhint:sarif-report": "./node_modules/.bin/solhint --disc -f sarif --ignore-path ../.solhintignore 'contracts/**/*.sol' > solhint_report.sarif",
+        "type-check": "tsc --noEmit -p tsconfig.json"
     },
     "repository": {
         "type": "git",
