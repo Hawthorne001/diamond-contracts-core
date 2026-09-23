@@ -1,0 +1,54 @@
+{
+    "name": "diamond-contracts-core",
+    "version": "4.0.0",
+    "description": "Staking and Hbbft shared key management for DMD Diamond",
+    "type": "module",
+    "scripts": {
+        "build": "pnpm hardhat build",
+        "test": "pnpm run clean && pnpm hardhat test",
+        "coverage": "pnpm run clean && pnpm hardhat test --coverage",
+        "clean": "pnpm hardhat clean",
+        "docs-build": "forge doc",
+        "lint": "pnpm run solhint:ci",
+        "solhint": "./node_modules/.bin/solhint -f table --ignore-path ../.solhintignore 'contracts/**/*.sol'",
+        "solhint:ci": "./node_modules/.bin/solhint --disc --max-warnings 0 -f compact --ignore-path ../.solhintignore 'contracts/**/*.sol'",
+        "solhint:sarif-report": "./node_modules/.bin/solhint --disc -f sarif --ignore-path ../.solhintignore 'contracts/**/*.sol' > solhint_report.sarif",
+        "type-check": "tsc --noEmit -p tsconfig.json",
+        "flat": "bash ../scripts/flatten.sh ./contracts",
+        "mythril": "pnpm run flat && bash ../scripts/run_mythril.sh ./flat"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/DMDcoin/contracts-monorepo.git",
+        "directory": "core"
+    },
+    "author": "thomashaller@gmx.at",
+    "license": "Apache-2.0",
+    "bugs": {
+        "url": "https://github.com/DMDcoin/contracts-monorepo/issues"
+    },
+    "homepage": "https://github.com/DMDcoin/contracts-monorepo/core#readme",
+    "dependencies": {
+        "@openzeppelin/contracts": "5.0.2",
+        "@openzeppelin/contracts-upgradeable": "5.0.2"
+    },
+    "devDependencies": {
+        "@nomicfoundation/hardhat-foundry": "^3.0.4",
+        "@nomicfoundation/hardhat-ledger": "^3.0.10",
+        "@nomicfoundation/hardhat-network-helpers": "^3.0.11",
+        "@nomicfoundation/hardhat-node-test-runner": "^3.0.17",
+        "@nomicfoundation/hardhat-toolbox-viem": "^5.0.7",
+        "@nomicfoundation/hardhat-viem": "^3.0.9",
+        "@nomicfoundation/hardhat-viem-assertions": "^3.1.2",
+        "@solidstate/hardhat-contract-sizer": "^3.0.3",
+        "@types/fs-extra": "^11.0.4",
+        "@types/mocha": "^10.0.10",
+        "@types/node": "^26.1.1",
+        "hardhat": "^3.9.1",
+        "solc": "0.8.25",
+        "solhint": "^6.2.3",
+        "ts-node": "^10.9.2",
+        "typescript": "^7.0.2",
+        "viem": "^2.55.2"
+    }
+}

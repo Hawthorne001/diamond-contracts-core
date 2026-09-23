@@ -1,6 +1,6 @@
 # HBBFT - POSDAO Smart Contracts
 
-[![Coverage][coveralls-badge]][coveralls]
+[![CI][ci-badge]][ci] [![Static analysis][static-analysis-badge]][static-analysis] [![Coverage][coveralls-badge]][coveralls]
 
 Implementation of the HBBFT-POSDAO consensus algorithm in [Solidity](https://solidity.readthedocs.io),
 suited for the needs of the DMD Diamond Blockchain https://github.com/DMDcoin/whitepaper/wiki
@@ -77,10 +77,10 @@ Flattened contracts can be used to verify the contract code in a block explorer 
 To prepare flattened version of the contracts:
 
 ```bash
-$ pnpm run flat
+$ pnpm --dir core run flat
 ```
 
-Once flattened, the contracts are available in the `flat` directory.
+Once flattened, the contracts are available in the `core/flat` directory.
 
 ## Contributing
 
@@ -88,12 +88,15 @@ See the [CONTRIBUTING](CONTRIBUTING.md) document for contribution, testing and p
 
 ## License
 
-Licensed under either of:
+Licensed under:
 
 - Apache License, Version 2.0, ([LICENSE-APACHE](LICENSE-APACHE) or <http://www.apache.org/licenses/LICENSE-2.0>)
-- MIT license ([LICENSE-MIT](LICENSE-MIT) or <http://opensource.org/licenses/MIT>)
+- GNU GPL v3.0 License or later ([LICENSE-GPL](LICENSE-GPL) or <https://www.gnu.org/licenses/gpl-3.0.en.html#license-text>)
 
-at your option.
 
-[coveralls]: https://coveralls.io/github/DMDcoin/diamond-contracts-core?branch=master
-[coveralls-badge]: https://coveralls.io/repos/github/DMDcoin/diamond-contracts-core/badge.svg?branch=master
+[ci]: https://github.com/DMDcoin/contracts-monorepo/actions/workflows/ci.yml
+[ci-badge]: https://github.com/DMDcoin/contracts-monorepo/actions/workflows/ci.yml/badge.svg?branch=master
+[static-analysis]: https://github.com/DMDcoin/contracts-monorepo/actions/workflows/static-analysis.yml
+[static-analysis-badge]: https://github.com/DMDcoin/contracts-monorepo/actions/workflows/static-analysis.yml/badge.svg?branch=master
+[coveralls]: https://coveralls.io/github/DMDcoin/contracts-monorepo?branch=master
+[coveralls-badge]: https://coveralls.io/repos/github/DMDcoin/contracts-monorepo/badge.svg?branch=master

@@ -1,45 +1,69 @@
-name: Build & test
+name: CI
 
-on: [push, pull_request]
+on:
+  push:
+    branches: [master]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
 jobs:
-  build:
+  core:
+    uses: ./.github/workflows/package-ci.yml
+    with:
+      package: core
+
+  dao:
+    uses: ./.github/workflows/package-ci.yml
+    with:
+      package: dao
+
+  views:
+    uses: ./.github/workflows/package-ci.yml
+    with:
+      package: views
+
+  coverage:
+    name: coverage-report
+    if: >
+      !cancelled() &&
+      (needs.core.result == 'success' ||
+       needs.dao.result == 'success' ||
+       needs.views.result == 'success')
+    needs: [core, dao, views]
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        node-version: [24.18.0]
+    timeout-minutes: 10
+    permissions:
+      contents: read
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v6
-        with:
-          persist-credentials: false
-          submodules: recursive
-
-      - name: Install Foundry
-        uses: foundry-rs/foundry-toolchain@v1
-
-      - name: Install pnpm
-        uses: pnpm/action-setup@v6
-        with:
-          version: 11.11.0
-          cache: true
-
-      - name: Use Node.js ${{ matrix.node-version }}
-        uses: actions/setup-node@v6
-        with:
-          node-version: ${{ matrix.node-version }}
-          cache: "pnpm"
-
-      - name: Install dependencies
-        run: pnpm install
-
-      - name: Build
-        run: pnpm hardhat build
-
-      - name: Run tests with coverage
-        run: pnpm hardhat test --coverage
-
-      - name: Coveralls
-        uses: coverallsapp/github-action@master
+      - name: Close parallel Coveralls build
+        uses: coverallsapp/github-action@v2
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
+          parallel-finished: true
+          carryforward: core,dao,views
+
+  ci-required:
+    name: ci-required
+    if: always()
+    needs: [core, dao, views]
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    permissions: {}
+    steps:
+      - name: Check required jobs
+        env:
+          CORE: ${{ needs.core.result }}
+          DAO: ${{ needs.dao.result }}
+          VIEWS: ${{ needs.views.result }}
+        run: |
+          echo "core=$CORE dao=$DAO views=$VIEWS"
+          test "$CORE" = "success"
+          test "$DAO" = "success"
+          test "$VIEWS" = "success"

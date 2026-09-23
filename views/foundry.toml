@@ -1,0 +1,23 @@
+[profile.default]
+extends = "../foundry.base.toml"
+src = "contracts"
+out = "out"
+libs = ["node_modules", "../lib"]
+no_match_coverage = "contracts/mocks/.*|scripts/*"
+
+remappings = [
+    "forge-std/=../lib/forge-std/src/",
+    "@openzeppelin/contracts/=node_modules/@openzeppelin/contracts/",
+    "@openzeppelin/contracts-upgradeable/=node_modules/@openzeppelin/contracts-upgradeable/",
+    "openzeppelin-foundry-upgrades/=node_modules/@openzeppelin/foundry-upgrades/src/",
+]
+
+[fmt]
+line_length = 120
+bracket_spacing = true
+wrap_comments = true
+
+[doc]
+ignore = ["**/*.t.sol"]
+out = "docs"
+repository = "https://github.com/DMDcoin/contracts-monorepo/views"

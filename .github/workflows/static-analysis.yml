@@ -1,0 +1,182 @@
+name: Static analysis
+
+on:
+  push:
+    branches: [master]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: static-analysis-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+jobs:
+  analyze:
+    name: ${{ matrix.package }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    strategy:
+      fail-fast: false
+      matrix:
+        package: [core, dao, views]
+
+    permissions:
+      contents: read
+      security-events: write
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+          submodules: recursive
+
+      - name: Install Foundry
+        uses: foundry-rs/foundry-toolchain@v1
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v6
+
+      - name: Install Node.js
+        uses: actions/setup-node@v7
+        with:
+          cache: pnpm
+          cache-dependency-path: pnpm-lock.yaml
+
+      - name: Cache Solidity compilers
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/hardhat-nodejs
+          key: hardhat-compilers-${{ runner.os }}-${{ hashFiles('hardhat.base.ts') }}
+          restore-keys: hardhat-compilers-${{ runner.os }}-
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Run Solhint
+        id: solhint
+        continue-on-error: true
+        env:
+          PACKAGE: ${{ matrix.package }}
+        run: pnpm --dir "$PACKAGE" run solhint:ci
+
+      - name: Generate Solhint report
+        if: always()
+        continue-on-error: true
+        env:
+          PACKAGE: ${{ matrix.package }}
+        run: pnpm --dir "$PACKAGE" run solhint:sarif-report
+
+      - name: Upload Solhint report
+        if: >
+          always() &&
+          hashFiles(format('{0}/solhint_report.sarif', matrix.package)) != '' &&
+          (github.event_name != 'pull_request' ||
+           github.event.pull_request.head.repo.full_name == github.repository)
+        uses: github/codeql-action/upload-sarif@v3
+        with:
+          sarif_file: ${{ matrix.package }}/solhint_report.sarif
+          category: solhint-${{ matrix.package }}
+
+      - name: Build contracts for Slither
+        env:
+          PACKAGE: ${{ matrix.package }}
+        run: pnpm --dir "$PACKAGE" run build
+
+      - name: Run Slither
+        id: slither
+        uses: crytic/slither-action@v0.4.2
+        with:
+          target: ${{ matrix.package }}
+          slither-config: ${{ matrix.package }}/slither.config.json
+          slither-version: 0.11.6
+          ignore-compile: true
+          slither-args: --compile-force-framework hardhat
+          sarif: ${{ matrix.package }}/slither_report.sarif
+          fail-on: none
+
+      - name: Upload Slither report
+        if: >
+          always() &&
+          hashFiles(format('{0}/slither_report.sarif', matrix.package)) != '' &&
+          (github.event_name != 'pull_request' ||
+           github.event.pull_request.head.repo.full_name == github.repository)
+        uses: github/codeql-action/upload-sarif@v3
+        with:
+          sarif_file: ${{ matrix.package }}/slither_report.sarif
+          category: slither-${{ matrix.package }}
+
+      - name: Fail on Solhint findings
+        if: always()
+        env:
+          SOLHINT_OUTCOME: ${{ steps.solhint.outcome }}
+        run: test "$SOLHINT_OUTCOME" = "success"
+
+  dependencies:
+    name: dependency scan
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    permissions:
+      contents: read
+      security-events: write
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v6
+
+      - name: Install Node.js
+        uses: actions/setup-node@v7
+        with:
+          node-version-file: .nvmrc
+          cache: pnpm
+          cache-dependency-path: pnpm-lock.yaml
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Scan dependencies with Grype
+        id: grype
+        uses: anchore/scan-action@v7
+        with:
+          path: "."
+          config: .grype.yaml
+          fail-build: true
+          severity-cutoff: high
+        env:
+          SYFT_SOURCE_NAME: dmd-contracts-monorepo
+          SYFT_SOURCE_VERSION: ${{ github.sha }}
+
+      - name: Upload Grype report
+        if: >
+          always() &&
+          steps.grype.outputs.sarif != '' &&
+          (github.event_name != 'pull_request' ||
+           github.event.pull_request.head.repo.full_name == github.repository)
+        uses: github/codeql-action/upload-sarif@v3
+        with:
+          sarif_file: ${{ steps.grype.outputs.sarif }}
+          category: grype
+
+  static-analysis-required:
+    name: static-analysis-required
+    if: always()
+    needs: [analyze, dependencies]
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    permissions: {}
+    steps:
+      - name: Check required jobs
+        env:
+          ANALYZE: ${{ needs.analyze.result }}
+          DEPENDENCIES: ${{ needs.dependencies.result }}
+        run: |
+          echo "analyze=$ANALYZE dependencies=$DEPENDENCIES"
+          test "$ANALYZE" = "success"
+          test "$DEPENDENCIES" = "success"

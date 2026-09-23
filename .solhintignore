@@ -1,1 +1,3 @@
-contracts/mocks/**
+**/mocks/**
+**/lib/**
+**/node_modules/**

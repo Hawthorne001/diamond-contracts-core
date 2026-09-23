@@ -1,0 +1,50 @@
+{
+    "name": "diamond-contracts-views",
+    "version": "4.0.0",
+    "description": "DMD Diamond view contracts",
+    "type": "module",
+    "scripts": {
+        "build": "pnpm hardhat build --force",
+        "test": "pnpm run clean && pnpm hardhat test",
+        "coverage": "pnpm run clean && pnpm hardhat test --coverage",
+        "clean": "pnpm hardhat clean",
+        "docs-build": "forge doc",
+        "lint": "pnpm run solhint:ci",
+        "solhint": "./node_modules/.bin/solhint -f table --ignore-path ../.solhintignore 'contracts/**/*.sol'",
+        "solhint:ci": "./node_modules/.bin/solhint --disc --max-warnings 0 -f compact --ignore-path ../.solhintignore 'contracts/**/*.sol'",
+        "solhint:sarif-report": "./node_modules/.bin/solhint --disc -f sarif --ignore-path ../.solhintignore 'contracts/**/*.sol' > solhint_report.sarif",
+        "type-check": "tsc --noEmit -p tsconfig.json"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/DMDcoin/contracts-monorepo.git",
+        "directory": "views"
+    },
+    "author": "bit.diamonds developers",
+    "license": "GPL-3.0-or-later",
+    "bugs": {
+        "url": "https://github.com/DMDcoin/contracts-monorepo/issues"
+    },
+    "homepage": "https://github.com/DMDcoin/contracts-monorepo/views#readme",
+    "dependencies": {
+        "@openzeppelin/contracts": "5.0.2",
+        "@openzeppelin/contracts-upgradeable": "5.0.2",
+        "diamond-contracts-core": "workspace:*",
+        "diamond-contracts-dao": "workspace:*"
+    },
+    "devDependencies": {
+        "@nomicfoundation/hardhat-ethers": "^4.0.0",
+        "@nomicfoundation/hardhat-ledger": "^3.0.10",
+        "@nomicfoundation/hardhat-verify": "^3.0.10",
+        "@openzeppelin/foundry-upgrades": "0.4.1",
+        "@openzeppelin/hardhat-upgrades": "4.1.0",
+        "@solidstate/hardhat-contract-sizer": "^3.0.3",
+        "@types/node": "^26.1.1",
+        "ethers": "^6.14.0",
+        "forge-std": "link:../lib/forge-std",
+        "hardhat": "^3.9.1",
+        "solc": "0.8.25",
+        "solhint": "^6.2.4",
+        "typescript": "^7.0.2"
+    }
+}

@@ -1,21 +1,27 @@
 .DS_Store
 .vscode/
+.idea/
 
-flat/
-abis/
-node_modules/
-coverageEnv/
-mythril/
+**/flat/
+**/abis/
+**/node_modules/
+**/coverageEnv/
+**/mythril/
 
 # hardhat specific files
-artifacts/
-cache/
-coverage/
-build/
-coverage.json
+**/artifacts/
+**/cache/
+**/coverage/
+**/build/
+**/coverage.json
 
 # foundry specific files
-out/
+**/out/
+
+# static analysis reports
+**/solhint_report.sarif
+**/slither_report.sarif
+**/results.sarif
 
 # Emacs backups
 \#*#

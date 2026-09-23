@@ -45,5 +45,24 @@
             "proxyAddress": "0x1300000000000000000000000000000000000001",
             "implementationAddress": "0x1300000000000000000000000000000000000000"
         }
+    ],
+    "dao": [
+        {
+            "name": "DiamondDao",
+            "proxyAddress": "0xDA0da0da0Da0Da0Da0DA00DA0da0da0DA0DA0dA0",
+            "implementationAddress": "0xDA00000000000000000000000000000000000000"
+        },
+        {
+            "name": "DiamondDaoLowMajority",
+            "proxyAddress": "0xDA0DA0DA0da0dA0Da0DA00da0DA0DA00000DeCaF",
+            "implementationAddress": "0xdA000000000000000000000000000000000dECAF"
+        }
+    ],
+    "views": [
+        {
+            "name": "DMDAggregatorUpgradeable",
+            "proxyAddress": "0x9990000000000000000000000000000000000000",
+            "implementationAddress": "0x9999000000000000000000000000000000000000"
+        }
     ]
 }
