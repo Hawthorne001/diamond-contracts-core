@@ -162,6 +162,10 @@ settings:
   autoInstallPeers: true
   excludeLinksFromLockfile: false
 
+overrides:
+  axios: 1.20.0
+  tmp: 0.2.7
+
 importers:
 
   .:
@@ -196,7 +200,7 @@ importers:
         version: 3.0.4(hardhat@3.16.0)
       '@nomicfoundation/hardhat-ledger':
         specifier: ^3.0.10
-        version: 3.0.10(debug@4.4.3(supports-color@7.2.0))(hardhat@3.16.0)
+        version: 3.0.10(debug@4.4.3(supports-color@7.2.0))(hardhat@3.16.0)(supports-color@7.2.0)
       '@nomicfoundation/hardhat-network-helpers':
         specifier: ^3.0.11
         version: 3.0.11(hardhat@3.16.0)
@@ -260,7 +264,7 @@ importers:
         version: 3.0.4(hardhat@3.16.0)
       '@nomicfoundation/hardhat-ledger':
         specifier: ^3.0.10
-        version: 3.0.10(debug@4.4.3(supports-color@7.2.0))(hardhat@3.16.0)
+        version: 3.0.10(debug@4.4.3(supports-color@7.2.0))(hardhat@3.16.0)(supports-color@7.2.0)
       '@nomicfoundation/hardhat-network-helpers':
         specifier: ^3.0.11
         version: 3.0.11(hardhat@3.16.0)
@@ -327,7 +331,7 @@ importers:
         version: 4.0.15(hardhat@3.16.0)
       '@nomicfoundation/hardhat-ledger':
         specifier: ^3.0.10
-        version: 3.0.10(debug@4.4.3(supports-color@7.2.0))(hardhat@3.16.0)
+        version: 3.0.10(debug@4.4.3(supports-color@7.2.0))(hardhat@3.16.0)(supports-color@7.2.0)
       '@nomicfoundation/hardhat-verify':
         specifier: ^3.0.10
         version: 3.1.0(hardhat@3.16.0)
@@ -1401,14 +1405,8 @@ packages:
     resolution: {integrity: sha512-wvUjBtSGN7+7SjNpq/9M2Tg350UZD3q62IFZLbRAR1bSMlCo1ZaeW+BJ+D090e4hIIZLBcTDWe4Mh4jvUDajzQ==}
     engines: {node: '>= 0.4'}
 
-  axios@1.12.2:
-    resolution: {integrity: sha512-vMJzPewAlRyOgxV2dU0Cuz2O8zzzx9VYtbJOaBgXFeLc4IV/Eg50n4LowmehOOR61S8ZMpc2K5Sa7g6A4jfkUw==}
-
-  axios@1.13.5:
-    resolution: {integrity: sha512-cz4ur7Vb0xS4/KUN0tPWe44eqxrIu31me+fbang3ijiNscE129POzipJJA6zniq2C/Z6sJCjMimjS8Lc/GAs8Q==}
-
-  axios@1.19.0:
-    resolution: {integrity: sha512-ht/iuYZXEjFxLH/Hkezgd7m6JKlHHXEUSneaDz8uZe1Gj5QZtCnpyDsckvAiEnT89OEbCLmnte4R4sn7P0EKFw==}
+  axios@1.20.0:
+    resolution: {integrity: sha512-r8aOh8j9cGKpgQAqpzrUHnSIc6a59Y3Xf/cv8sy1DrHCkZHzQGEuoq1tARk6qSyDdtQGSDgpb9kFlruzPvrgwg==}
 
   balanced-match@4.0.4:
     resolution: {integrity: sha512-BLrgEcRTwX2o6gGxGOCNyMvGSp35YofuYzw9h1IMTRmKqttAZZVU67bdb9Pr2vUHA8+j3i2tJfjO6C6+4myGTA==}
@@ -1582,6 +1580,7 @@ packages:
 
   crypto-js@4.2.0:
     resolution: {integrity: sha512-KALDyEYgpY+Rlob/iriUtjV6d5Eq+Y191A5g4UqLAi8CyGP9N1+FdVbkc1SxKc2r4YAYqG8JzO2KGL+AizD70Q==}
+    deprecated: Active development of CryptoJS has been discontinued. This library is no longer maintained.
 
   debug@4.4.3:
     resolution: {integrity: sha512-RGwwWnwQvkVfavKVt22FGLw+xYSdzARwm0ru6DhTVA3umU5hZc28V3kO4stgYryrTlLpuvgI9GiijltAjNbcqA==}
@@ -2108,10 +2107,6 @@ packages:
   once@1.4.0:
     resolution: {integrity: sha512-lNaJgI+2Q5URQBkccEKHTQOPaXdUxnZZElQTZY0MFUAuaEqe1E+Nyvgdz/aIyNi6Z9MzO5dv1H8n58/GELp3+w==}
 
-  os-tmpdir@1.0.2:
-    resolution: {integrity: sha512-D2FR03Vir7FIu45XBY20mTb+/ZSWB00sjU9jdQXt83gDrI4Ztz5Fs7/yy74g2N5SVQY4xY1qDr4rNddwYRVX0g==}
-    engines: {node: '>=0.10.0'}
-
   ox@0.14.44:
     resolution: {integrity: sha512-O54qXXHEk4ySamMSyBpI0AeBegS5frxU6+LA6Jb9Sf6kMOxcTNaxYmwZfpOu22DIQsdKfgQxHq8EsAGaoBQScA==}
     peerDependencies:
@@ -2201,9 +2196,6 @@ packages:
 
   proto-list@1.2.4:
     resolution: {integrity: sha512-vtK/94akxsTMhe0/cbfpR+syPuszcuwhqVjJq26CuNDgFGj682oRBXOP5MJpv2r7JtE8MsiepGIqvvOTBwn2vA==}
-
-  proxy-from-env@1.1.0:
-    resolution: {integrity: sha512-D+zkORCbA9f1tdWRK0RaCR3GPv50cMxcrz4X8k5LTSUD1Dkw47mKJEZQNunItRTkWwgtaUSo1RVFRIG9ZXiFYg==}
 
   proxy-from-env@2.1.0:
     resolution: {integrity: sha512-cJ+oHTW1VAEa8cJslgmUZrc+sjRKgAKl3Zyse6+PV38hZe/V6Z14TbCuXcan9F9ghlz4QrFr2c92TNF82UkYHA==}
@@ -2422,9 +2414,9 @@ packages:
     resolution: {integrity: sha512-wXR/dYpcqKmfWpEdZjiKJOwCNFndD0DMnrW/cYjVGttEkBfVgcLFHoNrlj47mjOVic9yyNu65alsgF4NQyTa2g==}
     engines: {node: '>=12.0.0'}
 
-  tmp@0.0.33:
-    resolution: {integrity: sha512-jRCJlojKnZ3addtTOjdIqoRuPEKBvNXcGYqzO6zWZX8KfKEpnGY5jfggJQ3EjKuu8D4bJRr0y+cYJFmYbImXGw==}
-    engines: {node: '>=0.6.0'}
+  tmp@0.2.7:
+    resolution: {integrity: sha512-e0votIpp4Uo2AJYSzVHV6xCcawuiez3DzqDAbrTc3YxBkplN6e+dM13ZeIcZnDg/QpSuU2zfZ3rzwY8ukEnaXw==}
+    engines: {node: '>=14.14'}
 
   to-buffer@1.2.2:
     resolution: {integrity: sha512-db0E3UJjcFhpDhAF4tLo03oli3pwl3dbnzXOUIlRKrp+ldk/VUxzpWYZENsw2SZiuBjHAk7DfB0VU7NKdpb6sw==}
@@ -3006,12 +2998,13 @@ snapshots:
 
   '@kwsites/promise-deferred@1.1.1': {}
 
-  '@ledgerhq/cryptoassets-evm-signatures@13.7.1(debug@4.4.3(supports-color@7.2.0))':
+  '@ledgerhq/cryptoassets-evm-signatures@13.7.1(debug@4.4.3(supports-color@7.2.0))(supports-color@7.2.0)':
     dependencies:
       '@ledgerhq/live-env': 2.42.0
-      axios: 1.12.2(debug@4.4.3(supports-color@7.2.0))
+      axios: 1.20.0(debug@4.4.3(supports-color@7.2.0))(supports-color@7.2.0)
     transitivePeerDependencies:
       - debug
+      - supports-color
 
   '@ledgerhq/devices@8.16.0':
     dependencies:
@@ -3028,47 +3021,50 @@ snapshots:
       rxjs: 7.8.2
       semver: 7.8.5
 
-  '@ledgerhq/domain-service@1.8.18(debug@4.4.3(supports-color@7.2.0))':
+  '@ledgerhq/domain-service@1.8.18(debug@4.4.3(supports-color@7.2.0))(supports-color@7.2.0)':
     dependencies:
       '@ledgerhq/logs': 6.19.0
       '@ledgerhq/types-live': 6.123.0
-      axios: 1.13.5(debug@4.4.3(supports-color@7.2.0))
+      axios: 1.20.0(debug@4.4.3(supports-color@7.2.0))(supports-color@7.2.0)
       eip55: 2.1.1
       react: 19.1.4
       react-dom: 19.1.4(react@19.1.4)
     transitivePeerDependencies:
       - debug
+      - supports-color
 
   '@ledgerhq/errors@6.37.0': {}
 
-  '@ledgerhq/evm-tools@1.14.3(debug@4.4.3(supports-color@7.2.0))':
+  '@ledgerhq/evm-tools@1.14.3(debug@4.4.3(supports-color@7.2.0))(supports-color@7.2.0)':
     dependencies:
       '@ethersproject/constants': 5.8.0
       '@ethersproject/hash': 5.8.0
       '@ledgerhq/live-env': 4.0.0
-      axios: 1.13.5(debug@4.4.3(supports-color@7.2.0))
+      axios: 1.20.0(debug@4.4.3(supports-color@7.2.0))(supports-color@7.2.0)
       crypto-js: 4.2.0
     transitivePeerDependencies:
       - debug
+      - supports-color
 
-  '@ledgerhq/hw-app-eth@6.47.1(debug@4.4.3(supports-color@7.2.0))':
+  '@ledgerhq/hw-app-eth@6.47.1(debug@4.4.3(supports-color@7.2.0))(supports-color@7.2.0)':
     dependencies:
       '@ethersproject/abi': 5.8.0
       '@ethersproject/rlp': 5.8.0
       '@ethersproject/transactions': 5.8.0
-      '@ledgerhq/cryptoassets-evm-signatures': 13.7.1(debug@4.4.3(supports-color@7.2.0))
-      '@ledgerhq/domain-service': 1.8.18(debug@4.4.3(supports-color@7.2.0))
+      '@ledgerhq/cryptoassets-evm-signatures': 13.7.1(debug@4.4.3(supports-color@7.2.0))(supports-color@7.2.0)
+      '@ledgerhq/domain-service': 1.8.18(debug@4.4.3(supports-color@7.2.0))(supports-color@7.2.0)
       '@ledgerhq/errors': 6.37.0
-      '@ledgerhq/evm-tools': 1.14.3(debug@4.4.3(supports-color@7.2.0))
+      '@ledgerhq/evm-tools': 1.14.3(debug@4.4.3(supports-color@7.2.0))(supports-color@7.2.0)
       '@ledgerhq/hw-transport': 6.31.13
       '@ledgerhq/hw-transport-mocker': 6.35.0
       '@ledgerhq/logs': 6.19.0
       '@ledgerhq/types-live': 6.123.0
-      axios: 1.12.2(debug@4.4.3(supports-color@7.2.0))
+      axios: 1.20.0(debug@4.4.3(supports-color@7.2.0))(supports-color@7.2.0)
       bignumber.js: 9.3.1
       semver: 7.8.5
     transitivePeerDependencies:
       - debug
+      - supports-color
 
   '@ledgerhq/hw-transport-mocker@6.35.0':
     dependencies:
@@ -3248,11 +3244,11 @@ snapshots:
       hardhat: 3.16.0
       zod: 3.25.76
 
-  '@nomicfoundation/hardhat-ledger@3.0.10(debug@4.4.3(supports-color@7.2.0))(hardhat@3.16.0)':
+  '@nomicfoundation/hardhat-ledger@3.0.10(debug@4.4.3(supports-color@7.2.0))(hardhat@3.16.0)(supports-color@7.2.0)':
     dependencies:
       '@ledgerhq/errors': 6.37.0
-      '@ledgerhq/evm-tools': 1.14.3(debug@4.4.3(supports-color@7.2.0))
-      '@ledgerhq/hw-app-eth': 6.47.1(debug@4.4.3(supports-color@7.2.0))
+      '@ledgerhq/evm-tools': 1.14.3(debug@4.4.3(supports-color@7.2.0))(supports-color@7.2.0)
+      '@ledgerhq/hw-app-eth': 6.47.1(debug@4.4.3(supports-color@7.2.0))(supports-color@7.2.0)
       '@ledgerhq/hw-transport': 6.36.0
       '@ledgerhq/hw-transport-node-hid': 6.33.5
       '@ledgerhq/types-live': 6.123.0
@@ -3265,6 +3261,7 @@ snapshots:
       zod: 3.25.76
     transitivePeerDependencies:
       - debug
+      - supports-color
 
   '@nomicfoundation/hardhat-network-helpers@3.0.11(hardhat@3.16.0)':
     dependencies:
@@ -3419,7 +3416,7 @@ snapshots:
       '@aws-sdk/client-lambda': 3.1134.0
       amazon-cognito-identity-js: 6.3.20
       async-retry: 1.3.3
-      axios: 1.19.0(debug@4.4.3(supports-color@7.2.0))(supports-color@7.2.0)
+      axios: 1.20.0(debug@4.4.3(supports-color@7.2.0))(supports-color@7.2.0)
     transitivePeerDependencies:
       - debug
       - encoding
@@ -3428,7 +3425,7 @@ snapshots:
   '@openzeppelin/defender-sdk-deploy-client@2.7.1(debug@4.4.3(supports-color@7.2.0))(supports-color@7.2.0)':
     dependencies:
       '@openzeppelin/defender-sdk-base-client': 2.7.1(debug@4.4.3(supports-color@7.2.0))(supports-color@7.2.0)
-      axios: 1.19.0(debug@4.4.3(supports-color@7.2.0))(supports-color@7.2.0)
+      axios: 1.20.0(debug@4.4.3(supports-color@7.2.0))(supports-color@7.2.0)
       lodash: 4.18.1
     transitivePeerDependencies:
       - debug
@@ -3438,7 +3435,7 @@ snapshots:
   '@openzeppelin/defender-sdk-network-client@2.7.1(debug@4.4.3(supports-color@7.2.0))(supports-color@7.2.0)':
     dependencies:
       '@openzeppelin/defender-sdk-base-client': 2.7.1(debug@4.4.3(supports-color@7.2.0))(supports-color@7.2.0)
-      axios: 1.19.0(debug@4.4.3(supports-color@7.2.0))(supports-color@7.2.0)
+      axios: 1.20.0(debug@4.4.3(supports-color@7.2.0))(supports-color@7.2.0)
       lodash: 4.18.1
     transitivePeerDependencies:
       - debug
@@ -3600,7 +3597,7 @@ snapshots:
   '@solidstate/hardhat-solidstate-utils@1.0.3(@nomicfoundation/hardhat-utils@4.1.9)(debug@4.4.3(supports-color@7.2.0))(hardhat@3.16.0)(supports-color@7.2.0)':
     dependencies:
       '@nomicfoundation/hardhat-utils': 4.1.9
-      axios: 1.19.0(debug@4.4.3(supports-color@7.2.0))(supports-color@7.2.0)
+      axios: 1.20.0(debug@4.4.3(supports-color@7.2.0))(supports-color@7.2.0)
       chalk: 5.6.2
       cli-table3: 0.6.5
       env-paths: 4.0.0
@@ -3791,23 +3788,7 @@ snapshots:
     dependencies:
       possible-typed-array-names: 1.1.0
 
-  axios@1.12.2(debug@4.4.3(supports-color@7.2.0)):
-    dependencies:
-      follow-redirects: 1.16.0(debug@4.4.3(supports-color@7.2.0))
-      form-data: 4.0.6
-      proxy-from-env: 1.1.0
-    transitivePeerDependencies:
-      - debug
-
-  axios@1.13.5(debug@4.4.3(supports-color@7.2.0)):
-    dependencies:
-      follow-redirects: 1.16.0(debug@4.4.3(supports-color@7.2.0))
-      form-data: 4.0.6
-      proxy-from-env: 1.1.0
-    transitivePeerDependencies:
-      - debug
-
-  axios@1.19.0(debug@4.4.3(supports-color@7.2.0))(supports-color@7.2.0):
+  axios@1.20.0(debug@4.4.3(supports-color@7.2.0))(supports-color@7.2.0):
     dependencies:
       follow-redirects: 1.16.0(debug@4.4.3(supports-color@7.2.0))
       form-data: 4.0.6
@@ -4562,8 +4543,6 @@ snapshots:
     dependencies:
       wrappy: 1.0.2
 
-  os-tmpdir@1.0.2: {}
-
   ox@0.14.44(typescript@7.0.2)(zod@3.25.76):
     dependencies:
       '@adraffy/ens-normalize': 1.11.1
@@ -4668,8 +4647,6 @@ snapshots:
       signal-exit: 3.0.7
 
   proto-list@1.2.4: {}
-
-  proxy-from-env@1.1.0: {}
 
   proxy-from-env@2.1.0: {}
 
@@ -4832,7 +4809,7 @@ snapshots:
       js-sha3: 0.8.0
       memorystream: 0.3.1
       semver: 5.7.2
-      tmp: 0.0.33
+      tmp: 0.2.7
     transitivePeerDependencies:
       - debug
 
@@ -4932,9 +4909,7 @@ snapshots:
       fdir: 6.5.0(picomatch@4.0.7)
       picomatch: 4.0.7
 
-  tmp@0.0.33:
-    dependencies:
-      os-tmpdir: 1.0.2
+  tmp@0.2.7: {}
 
   to-buffer@1.2.2:
     dependencies:
