@@ -5,6 +5,12 @@
 only-fixed: true
 
 ignore:
+  - reason: "ignore tsc binary vulnerabilities in CI, can't fix"
+    package:
+      name: stdlib
+      type: go-module
+      location: "**/@typescript/typescript-*/lib/tsc"
+
   # esbuild (Go binary in node_modules)
   - vulnerability: GO-2026-5970
     package:

@@ -103,7 +103,7 @@ jobs:
           hashFiles(format('{0}/slither_report.sarif', matrix.package)) != '' &&
           (github.event_name != 'pull_request' ||
            github.event.pull_request.head.repo.full_name == github.repository)
-        uses: github/codeql-action/upload-sarif@v3
+        uses: github/codeql-action/upload-sarif@v4
         with:
           sarif_file: ${{ matrix.package }}/slither_report.sarif
           category: slither-${{ matrix.package }}
@@ -150,7 +150,7 @@ jobs:
           fail-build: true
           severity-cutoff: high
         env:
-          SYFT_SOURCE_NAME: dmd-contracts-monorepo
+          SYFT_SOURCE_NAME: contracts-monorepo
           SYFT_SOURCE_VERSION: ${{ github.sha }}
 
       - name: Upload Grype report
@@ -159,7 +159,7 @@ jobs:
           steps.grype.outputs.sarif != '' &&
           (github.event_name != 'pull_request' ||
            github.event.pull_request.head.repo.full_name == github.repository)
-        uses: github/codeql-action/upload-sarif@v3
+        uses: github/codeql-action/upload-sarif@v4
         with:
           sarif_file: ${{ steps.grype.outputs.sarif }}
           category: grype
