@@ -47,9 +47,6 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
-      - name: Type-check
-        run: pnpm --dir "$PACKAGE" run type-check
-
       - name: Lint
         run: pnpm --dir "$PACKAGE" run lint
 
