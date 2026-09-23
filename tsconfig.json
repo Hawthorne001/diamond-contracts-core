@@ -13,7 +13,9 @@
         "resolveJsonModule": true,
         "sourceMap": true,
         "strict": true,
-        "target": "es2020"
+        "target": "es2020",
+        "allowImportingTsExtensions": true,
+        "emitDeclarationOnly": true
     },
     "files": [
         "./core/hardhat.config.ts",

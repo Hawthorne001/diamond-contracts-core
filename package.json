@@ -1,6 +1,7 @@
 {
     "name": "@dmdcoin/contracts-monorepo",
     "version": "4.0.0",
+    "type": "module",
     "packageManager": "pnpm@12.5.1",
     "scripts": {
         "build": "pnpm run build:core && pnpm run build:dao && pnpm run build:views",
@@ -16,9 +17,10 @@
         "coverage:dao": "pnpm --dir dao run coverage",
         "coverage:views": "pnpm --dir views run coverage",
         "lint": "pnpm --dir core run lint && pnpm --dir dao run lint && pnpm --dir views run lint",
-        "type-check": "pnpm --dir core run type-check && pnpm --dir dao run type-check && pnpm --dir views run type-check",
+        "type-check": "pnpm run type-check:spec && pnpm --dir core run type-check && pnpm --dir dao run type-check && pnpm --dir views run type-check",
         "clean": "pnpm --dir core run clean && pnpm --dir dao run clean && pnpm --dir views run clean",
-        "spec": "pnpm run build:core && pnpm --dir core run spec",
+        "spec": "pnpm run build && pnpm run spec:generate",
+        "spec:generate": "node scripts/spec/index.ts",
         "ci": "pnpm run type-check && pnpm run lint && pnpm run test",
         "mythril": "pnpm --dir core run mythril"
     },
@@ -30,7 +32,10 @@
         }
     },
     "devDependencies": {
+        "@types/node": "^26.1.1",
         "hardhat": "^3.16.0",
-        "viem": "^2.55.2"
+        "typescript": "^7.0.2",
+        "viem": "^2.55.2",
+        "yaml": "^2.9.1"
     }
 }

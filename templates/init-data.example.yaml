@@ -1,0 +1,76 @@
+# Definition of a DMD Diamond network genesis.
+#
+# Generate a spec with:
+#
+#   pnpm run spec -- --init-data path/to/init-data.yaml
+#
+# Addresses, hashes and amounts must be quoted for correct parsing.
+
+network:
+  name: DPoSChain
+  id: "101"
+
+  # Block time bounds in seconds. 0 leaves the template default in place.
+  minimumBlockTime: 0
+  maximumBlockTime: 0
+
+owner: "0x1092a1E3A3F2FB2024830Dd12064a4B33fF8EbAe"
+
+# The initial validator set. All six lists are matched by position, so entry n
+# of every list describes the same validator.
+validators:
+  miningAddresses:
+    - "0xeE385a1df869A468883107B0C06fA8791b28A04f"
+    - "0x71385ae87c4b93db96f02f952be1f7a63f6057a6"
+    - "0x190ec582090ae24284989af812f6b2c93f768ecd"
+
+  stakingAddresses:
+    - "0xe5aa2949ac94896bb2c5c75d9d5a88eb9f7c6b59"
+    - "0x63a9344ae66c1f26d400b3ea4750a709c3aa6cfa"
+    - "0xa5f6858d6254329a67cddab2dc04d795c5257709"
+
+  # 64 byte secp256k1 public keys, without the 0x04 prefix byte.
+  publicKeys:
+    - "0x52be8f332b0404dff35dd0b2ba44993a9d3dc8e770b9ce19a849dff948f1e14c57e7c8219d522c1a4cce775adbee5330f222520f0afdabfdb4a4501ceeb8dcee"
+    - "0x99edf3f524a6f73e7f5d561d0030fc6bcc3e4bd33971715617de7791e12d9bdf6258fa65b74e7161bbbf7ab36161260f56f68336a6f65599dc37e7f2e397f845"
+    - "0xa255fd7ad199f0ee814ee00cce44ef2b1fa1b52eead5d8013ed85eade03034ae4c246658946c2e1d7ded96394a1247fb4d093c32474317ae388e8d25692a0f56"
+
+  # 16 byte encoded ip:port of each validator node.
+  ipAddresses:
+    - "0x11111111111111111111111111111111"
+    - "0x22222222222222222222222222222222"
+    - "0x33333333333333333333333333333333"
+
+  parts:
+    - "0xaa"
+    - "0xbb"
+    - "0xcc"
+  acks:
+    - ["0xa1", "0xa2"]
+    - ["0xb1", "0xb2"]
+    - ["0xc1", "0xc2"]
+
+  # 31536000 - 1 year
+  inactivityThreshold: 31536000
+
+# Amounts are written in whole DMD, not wei.
+staking:
+  # Length of a staking epoch, and the transition window at its end, in seconds.
+  epochDuration: 120954
+  transitionWindowLength: 600
+
+  withdrawDisallowPeriod: 4320
+
+  delegatorMinStake: "1"
+  candidateMinStake: "1"
+  maxStake: "50000"
+
+connectivity:
+  reportDisallowPeriod: 10
+
+dao:
+  createProposalFee: "10"
+
+initialFund:
+  address: "0x1092a1E3A3F2FB2024830Dd12064a4B33fF8EbAe"
+  balance: "4380000"

@@ -14,7 +14,6 @@
         "solhint:ci": "./node_modules/.bin/solhint --disc --max-warnings 0 -f compact --ignore-path ../.solhintignore 'contracts/**/*.sol'",
         "solhint:sarif-report": "./node_modules/.bin/solhint --disc -f sarif --ignore-path ../.solhintignore 'contracts/**/*.sol' > solhint_report.sarif",
         "type-check": "tsc --noEmit -p tsconfig.json",
-        "spec": "pnpm hardhat make_spec_hbbft --init-contracts ../initial-contracts.json --use-upgrade-proxy init-data.json",
         "flat": "bash ../scripts/flatten.sh ./contracts",
         "mythril": "pnpm run flat && bash ../scripts/run_mythril.sh ./flat"
     },

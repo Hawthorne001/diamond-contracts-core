@@ -166,12 +166,21 @@ importers:
 
   .:
     devDependencies:
+      '@types/node':
+        specifier: ^26.1.1
+        version: 26.6.1
       hardhat:
         specifier: ^3.16.0
         version: 3.16.0
+      typescript:
+        specifier: ^7.0.2
+        version: 7.0.2
       viem:
         specifier: ^2.55.2
         version: 2.56.6(typescript@7.0.2)(zod@3.25.76)
+      yaml:
+        specifier: ^2.9.1
+        version: 2.9.1
 
   core:
     dependencies:
@@ -2552,6 +2561,11 @@ packages:
   yallist@5.0.0:
     resolution: {integrity: sha512-YgvUTfwqyc7UXVMrB+SImsVYSmTS8X/tSrtdNZMImM+n7+QTriRXyXim0mBrTXNeqzVF0KWGgHPeiyViFFrNDw==}
     engines: {node: '>=18'}
+
+  yaml@2.9.1:
+    resolution: {integrity: sha512-3NxN8+78OdzbT7C/WjGsyfPAtJaN3FNDsWxv7Y7mcDsT/oOmgW8BpyQQFFBnvZE3j9Y2Sdz1ULFLezL7Eb2yFw==}
+    engines: {node: '>= 14.6'}
+    hasBin: true
 
   yn@3.1.1:
     resolution: {integrity: sha512-Ux4ygGWsu2c7isFWe8Yu1YluJmqVhxqK2cLXNQA5AcC3QfbGNpM7fu0Y8b/z16pXLnFxZYvWhd3fhBY9DLmC6Q==}
@@ -5062,6 +5076,8 @@ snapshots:
   ws@8.21.3: {}
 
   yallist@5.0.0: {}
+
+  yaml@2.9.1: {}
 
   yn@3.1.1: {}
 
