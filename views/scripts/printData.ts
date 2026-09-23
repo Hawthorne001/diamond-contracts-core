@@ -1,21 +1,12 @@
-import { ethers } from "hardhat";
-import { aggregatorSol } from "../typechain-types/contracts";
+import hre from "hardhat";
 
 
 async function runTest() {
-
-
-
-    //let address = "0x9990000000000000000000000000000000000000";
-    // let address2 = "0x00c795312dAE2FBC3D3D8b157bdBe7eEABE6AB40";
+    const connection = await hre.network.create();
+    const { ethers } = connection;
 
     let address2 = "0x0069D35CDA1e5e2571E7C1bF5F406f7198a148Dc";
-    
-    let contractFactory = await ethers.getContractFactory("DMDAggregator");
-
-    let connected = contractFactory.connect(ethers);
-
-    let connectedContract = connected.attach(address2) as aggregatorSol.DMDAggregator;
+    const connectedContract = await ethers.getContractAt("DMDAggregator", address2);
 
     
     let user = "0x99E83775db0f147c9DEfc3C09CD8F52F4F0c5F53";
@@ -60,7 +51,7 @@ async function runTest() {
             console.log("pools:");
             console.table(pools.stActivePools);
             const poolsData = await connectedContract.getPoolsData(pools.stActivePools);
-            poolsData.forEach((pool, idx) => {
+            poolsData.forEach((pool: any, idx: number) => {
                 console.log(`\nPool ${idx + 1}:`);
                 console.log("  Mining Address:", pool.miningAddress);
                 console.log("  Available Since:", pool.availableSince.toString());
@@ -81,7 +72,7 @@ async function runTest() {
             console.log("💰 USER STAKES (for current signer)");
             console.log("-".repeat(80));
             const userStakes = await connectedContract.getUserStakes(user, pools.stActivePools);
-            userStakes.forEach((stake, idx) => {
+            userStakes.forEach((stake: any, idx: number) => {
                 console.log(`Pool ${idx + 1} (${stake.pool}):`);
                 console.log("  My Staked Amount:", ethers.formatEther(stake.myStakedAmount), "ETH");
                 console.log("  Total Staked:", ethers.formatEther(stake.stakedAmountTotal), "ETH");
@@ -94,7 +85,7 @@ async function runTest() {
             console.log("📤 USER ORDERED WITHDRAWS (for current signer)");
             console.log("-".repeat(80));
             const orderedWithdraws = await connectedContract.getUserOrderedWithdraws(user, pools.stActivePools);
-            orderedWithdraws.forEach((withdraw, idx) => {
+            orderedWithdraws.forEach((withdraw: any, idx: number) => {
                 if (withdraw.orderedAmount > 0n) {
                     console.log(`Pool ${idx + 1} (${withdraw.pool}):`);
                     console.log("  Ordered Amount:", ethers.formatEther(withdraw.orderedAmount), "ETH");
@@ -119,7 +110,7 @@ async function runTest() {
                 console.log("Own Stake:", ethers.formatEther(ownStake), "ETH");
                 console.log("Candidate Stake:", ethers.formatEther(candidateStake), "ETH");
                 console.log("\nDelegators:");
-                delegatesData.forEach((delegate, idx) => {
+                delegatesData.forEach((delegate: any, idx: number) => {
                     console.log(`  ${idx + 1}. ${delegate.delegator}: ${ethers.formatEther(delegate.delegatedAmount)} ETH`);
                 });
             }
@@ -168,7 +159,7 @@ async function runTest() {
         if (activeProposals.length === 0) {
             console.log("No active proposals");
         } else {
-            activeProposals.forEach((proposalDetail, idx) => {
+            activeProposals.forEach((proposalDetail: any, idx: number) => {
                 console.log(`\nProposal ${idx + 1}:`);
                 console.log("  ID:", idx.toString());
                 console.log("  Proposer:", proposalDetail.proposal.proposer);
@@ -191,7 +182,7 @@ async function runTest() {
         console.log(`Total Historic Proposals: ${historicProposals.length}`);
         if (historicProposals.length > 0) {
             console.log("\nShowing first 5 proposals:");
-            historicProposals.slice(0, 5).forEach((proposalDetail, idx) => {
+            historicProposals.slice(0, 5).forEach((proposalDetail: any, idx: number) => {
                 console.log(`\n  Proposal ${idx + 1}:`);
                 console.log("    ID:", idx.toString());
                 console.log("    Title:", proposalDetail.proposal.title);
@@ -208,9 +199,10 @@ async function runTest() {
         console.error("\n❌ Error:", error);
     }
 
-
-
 }
 
 
-runTest();
+runTest().catch((error) => {
+    console.error(error);
+    process.exitCode = 1;
+});
