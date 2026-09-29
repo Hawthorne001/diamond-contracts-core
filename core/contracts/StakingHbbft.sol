@@ -1517,6 +1517,8 @@ contract StakingHbbft is
             } else {
                 _removePool(_poolStakingAddress);
             }
+
+            bonusScoreContract.resetBonusScore(miningAddress);
         } else {
             _removePoolDelegator(_poolStakingAddress, _staker);
 

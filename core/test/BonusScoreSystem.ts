@@ -43,6 +43,7 @@ enum ScoringFactor {
     NoStandByPenalty,
     NoKeyWritePenalty,
     BadPerformancePenalty,
+    WithdrawReset
 }
 
 const ScoringFactors = [
@@ -483,7 +484,7 @@ describe("BonusScoreSystem", function () {
         it("should revert for unknown scoring factor", async function () {
             const { bonusScoreSystem } = await helpers.loadFixture(deployContracts);
 
-            const unknownFactor = ScoringFactor.BadPerformancePenalty + 1;
+            const unknownFactor = ScoringFactor.WithdrawReset + 1;
 
             await hhViem.assertions.revert(
                 bonusScoreSystem.read.getScoringFactorValue([unknownFactor]),
@@ -752,6 +753,65 @@ describe("BonusScoreSystem", function () {
                 bonusScoreSystem,
                 "ReentrancyGuardReentrantCall",
             );
+        });
+    });
+
+    describe('resetBonusScore', async () => {
+        it('should restrict calling to StakingHbbft contract', async function () {
+            const { bonusScoreSystem } = await helpers.loadFixture(deployContracts);
+            const caller = users[5].account;
+
+            await hhViem.assertions.revertWithCustomError(
+                bonusScoreSystem.write.resetBonusScore([randomWallet()], { account: caller }),
+                bonusScoreSystem,
+                "Unauthorized",
+            );
+        });
+
+        it('should set validator score to MIN_SCORE', async function () {
+            const {
+                bonusScoreSystem,
+                stakingHbbft,
+                initialValidators,
+            } = await helpers.loadFixture(deployContracts);
+
+            const validator = initialValidators[0].miningAddress();
+            const scoreBefore = 256n;
+
+            await increaseScore(bonusScoreSystem, validator, scoreBefore);
+            assert.equal(await bonusScoreSystem.read.getValidatorScore([validator]), scoreBefore);
+
+            const caller = await impersonateAcc(stakingHbbft.address);
+
+            assert.ok(await bonusScoreSystem.write.resetBonusScore([validator], { account: caller }));
+            assert.equal(await bonusScoreSystem.read.getValidatorScore([validator]), MIN_SCORE);
+
+            await helpers.stopImpersonatingAccount(caller);
+        })
+
+        it('should emit event', async function () {
+            const {
+                bonusScoreSystem,
+                stakingHbbft,
+                initialValidators,
+            } = await helpers.loadFixture(deployContracts);
+
+            const validator = initialValidators[0].miningAddress();
+
+            const scoreBefore = 1000n;
+            const scoreAfter = MIN_SCORE;
+            await increaseScore(bonusScoreSystem, validator, scoreBefore);
+            assert.equal(await bonusScoreSystem.read.getValidatorScore([validator]), scoreBefore);
+
+            const caller = await impersonateAcc(stakingHbbft.address);
+            await hhViem.assertions.emitWithArgs(
+                bonusScoreSystem.write.resetBonusScore([validator], { account: caller }),
+                bonusScoreSystem,
+                "ValidatorScoreChanged",
+                [validator, ScoringFactor.WithdrawReset, scoreAfter],
+            );
+
+            await helpers.stopImpersonatingAccount(caller);
         });
     });
 

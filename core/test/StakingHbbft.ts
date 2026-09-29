@@ -3,6 +3,7 @@ import { describe, it, before, beforeEach } from "node:test";
 import hre from "hardhat";
 
 import {
+    assertTransactionLegacy,
     getAddress,
     parseEther,
     parseEventLogs,
@@ -153,6 +154,7 @@ describe("StakingHbbft", () => {
             blockRewardHbbft,
             randomHbbft,
             keyGenHistory,
+            bonusScoreContractMock,
             candidateMinStake,
             delegatorMinStake,
         };
@@ -2064,6 +2066,48 @@ describe("StakingHbbft", () => {
             likelihoodInfo = await stakingHbbft.read.getPoolsLikelihood();
             assert.equal(likelihoodInfo[0][0], stakeAmount / 2n);
             assert.equal(likelihoodInfo[1], stakeAmount / 2n);
+        });
+
+        it('should reset bonus score on full withdraw by pool owner', async function () {
+            const {
+                stakingHbbft,
+                validatorSetHbbft,
+                bonusScoreContractMock,
+            } = await helpers.loadFixture(deployContractsFixture);
+
+            const pool = initialValidators[1].staking;
+
+            assert.equal(await stakingHbbft.read.stakeAmount([pool.address, pool.address]), 0n);
+            assert.equal(await stakingHbbft.read.stakeAmountByCurrentEpoch([pool.address, pool.address]), 0n);
+            assert.equal(await stakingHbbft.read.stakeAmount([pool.address, delegatorAddr]), 0n);
+            assert.equal(await stakingHbbft.read.stakeAmountByCurrentEpoch([pool.address, delegatorAddr]), 0n);
+
+            await stakingHbbft.write.stake([pool.address], { account: pool, value: stakeAmount });
+            assert.equal(await stakingHbbft.read.stakeAmount([pool.address, pool.address]), stakeAmount);
+            assert.equal(await stakingHbbft.read.stakeAmountByCurrentEpoch([pool.address, pool.address]), stakeAmount);
+
+            await stakingHbbft.write.stake([pool.address], { account: delegatorAddr, value: stakeAmount });
+            assert.equal(await stakingHbbft.read.stakeAmount([pool.address, delegatorAddr]), stakeAmount);
+            assert.equal(await stakingHbbft.read.stakeAmountByCurrentEpoch([pool.address, delegatorAddr]), stakeAmount);
+            assert.equal(await stakingHbbft.read.stakeAmountTotal([pool.address]), stakeAmount * 2n);
+
+            const miningAddress = await validatorSetHbbft.read.miningByStakingAddress([pool.address]);
+            const score = 512n;
+            const minScore = 1n;
+            await bonusScoreContractMock.write.setValidatorScore([miningAddress, score]);
+
+            assert.equal(await bonusScoreContractMock.read.getValidatorScore([miningAddress]), score);
+
+            await hhViem.assertions.emitWithArgs(
+                stakingHbbft.write.withdraw([pool.address, stakeAmount], { account: pool }),
+                stakingHbbft,
+                "WithdrewStake",
+                [pool.address, pool.address, 0n, stakeAmount],
+            );
+
+            assert.equal(await bonusScoreContractMock.read.getValidatorScore([miningAddress]), minScore);
+            assert.equal(await stakingHbbft.read.stakeAmount([pool.address, pool.address]), 0n);
+            assert.equal(await stakingHbbft.read.stakeAmountTotal([pool.address]), stakeAmount);
         });
     });
 
