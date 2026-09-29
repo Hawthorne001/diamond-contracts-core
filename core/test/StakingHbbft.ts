@@ -2773,7 +2773,7 @@ describe("StakingHbbft", () => {
                 let potsShares = await blockRewardHbbft.read.getPotsShares([BigInt(validators.length)]);
 
                 let validatorRewards = potsShares.totalRewards - potsShares.governancePotAmount;
-                let poolReward = validatorRewards;
+                let poolReward = validatorRewards / BigInt(validators.length);
 
                 let poolTotalStake = await stakingHbbft.read.stakeAmountTotal([validator.stakingAddress()]);
 
@@ -2812,7 +2812,7 @@ describe("StakingHbbft", () => {
 
                 potsShares = await blockRewardHbbft.read.getPotsShares([BigInt(validators.length)]);
                 validatorRewards = potsShares.totalRewards - potsShares.governancePotAmount;
-                poolReward = validatorRewards;
+                poolReward = validatorRewards / BigInt(validators.length);
 
                 poolTotalStake = await stakingHbbft.read.stakeAmountTotal([validator.stakingAddress()]);
 

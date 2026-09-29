@@ -530,8 +530,6 @@ describe("BlockRewardHbbft", function () {
             const validators = await validatorSet.read.getValidators();
             const potsShares = await blockReward.read.getPotsShares([BigInt(validators.length)]);
 
-            const expectedUndistributedNativeRewards = potsShares.totalRewards - potsShares.governancePotAmount;
-
             const systemAccount = await impersonateAcc(SystemAccountAddress);
 
             await hhViem.assertions.emitWithArgs(
@@ -542,8 +540,6 @@ describe("BlockRewardHbbft", function () {
             );
 
             await helpers.stopImpersonatingAccount(SystemAccountAddress);
-
-            assert.equal(await blockReward.read.nativeRewardUndistributed(), expectedUndistributedNativeRewards);
 
             const currentValidators = await validatorSet.read.getValidators();
             for (const validatorAddress of currentValidators) {
@@ -570,11 +566,6 @@ describe("BlockRewardHbbft", function () {
             await helpers.time.increaseTo(fixedEpochEndTime + 1n);
             await helpers.mine(1);
 
-            const validators = await validatorSet.read.getValidators();
-            const potsShares = await blockReward.read.getPotsShares([BigInt(validators.length)]);
-
-            const expectedUndistributedNativeRewards = potsShares.totalRewards - potsShares.governancePotAmount;
-
             const systemAccount = await impersonateAcc(SystemAccountAddress);
 
             await hhViem.assertions.emitWithArgs(
@@ -586,12 +577,285 @@ describe("BlockRewardHbbft", function () {
 
             await helpers.stopImpersonatingAccount(SystemAccountAddress);
 
-            assert.equal(await blockReward.read.nativeRewardUndistributed(), expectedUndistributedNativeRewards);
-
             const currentValidators = await validatorSet.read.getValidators();
             for (const validatorAddress of currentValidators) {
                 assert.deepEqual(await blockReward.read.epochsPoolGotRewardFor([validatorAddress]), []);
             }
+        });
+
+        it('should divide pool reward by total validators count, not by rewarded count', async function () {
+            const {
+                blockReward,
+                staking,
+                validatorSet,
+                connectivityTracker,
+                initialValidators,
+            } = await helpers.loadFixture(deployContractsFixture);
+
+            const candidateMinStake = await staking.read.candidateMinStake();
+
+            for (const validator of initialValidators) {
+                await staking.write.stake(
+                    [validator.stakingAddress()],
+                    { account: validator.staking, value: candidateMinStake },
+                );
+
+                const latestBlock = await publicClient.getBlock();
+                await validatorSet.write.announceAvailability([latestBlock.number, latestBlock.hash], {
+                    account: validator.mining,
+                });
+            }
+
+            await callReward(blockReward, true);
+            await blockReward.write.addToDeltaPot({value: parseEther("10")});
+
+            const inactiveValidator = initialValidators[0];
+
+            const connectivityTrackerCaller = await impersonateAcc(connectivityTracker.address);
+            await helpers.setBalance(connectivityTracker.address, parseEther("10"));
+
+            await validatorSet.write.notifyUnavailability(
+                [inactiveValidator.miningAddress()],
+                { account: connectivityTrackerCaller }
+            );
+            await helpers.mine(5);
+
+            const announceBlock = await publicClient.getBlock();
+            await validatorSet.write.announceAvailability(
+                [
+                    announceBlock!.number,
+                    announceBlock!.hash!,
+                ],
+                { account: inactiveValidator.mining },
+            );
+
+            const fixedEpochEndTime = await staking.read.stakingFixedEpochEndTime();
+            await helpers.time.increaseTo(fixedEpochEndTime + 1n);
+            await helpers.mine(1);
+
+            const validators = await validatorSet.read.getValidators();
+            const potsShares = await blockReward.read.getPotsShares([BigInt(validators.length)]);
+
+            const expectedPoolReward = (potsShares.totalRewards - potsShares.governancePotAmount) / BigInt(validators.length);
+
+            const epochNumber = await staking.read.stakingEpoch();
+
+            await callReward(blockReward, true);
+
+            const rewardedEpochs = await blockReward.read.epochsPoolGotRewardFor([inactiveValidator.stakingAddress()]);
+
+            assert.equal(rewardedEpochs.length, 0);
+
+            for (const validatorAddress of validators) {
+                if (validatorAddress == inactiveValidator.miningAddress()) {
+                    continue;
+                }
+
+                const recorded = await blockReward.read.epochPoolNativeReward([epochNumber, validatorAddress]);
+                assert.equal(recorded, expectedPoolReward);
+            }
+        });
+
+        it('should keep nativeRewardUndistributed = 0 in partial rewards distribution', async function () {
+            const {
+                blockReward,
+                staking,
+                validatorSet,
+                connectivityTracker,
+                initialValidators,
+            } = await helpers.loadFixture(deployContractsFixture);
+
+            const candidateMinStake = await staking.read.candidateMinStake();
+
+            for (const validator of initialValidators) {
+                await staking.write.stake(
+                    [validator.stakingAddress()],
+                    { account: validator.staking, value: candidateMinStake },
+                );
+
+                const latestBlock = await publicClient.getBlock();
+                await validatorSet.write.announceAvailability([latestBlock.number, latestBlock.hash], {
+                    account: validator.mining,
+                });
+            }
+
+            await callReward(blockReward, true);
+            await blockReward.write.addToDeltaPot({value: parseEther("10")});
+
+            const connectivityTrackerCaller = await impersonateAcc(connectivityTracker.address);
+            await helpers.setBalance(connectivityTracker.address, parseEther("10"));
+
+            const inactiveValidator = initialValidators[0];
+            
+            await validatorSet.write.notifyUnavailability(
+                [inactiveValidator.miningAddress()],
+                { account: connectivityTrackerCaller }
+            );
+            await helpers.mine(5);
+
+            const announceBlock = await publicClient.getBlock();
+            await validatorSet.write.announceAvailability([announceBlock.number, announceBlock.hash], {
+                account: inactiveValidator.mining,
+            });
+
+            assert.equal(await blockReward.read.nativeRewardUndistributed(), 0n);
+
+            const fixedEpochEndTime = await staking.read.stakingFixedEpochEndTime();
+            await helpers.time.increaseTo(fixedEpochEndTime + 1n);
+            await helpers.mine(1);
+
+            await callReward(blockReward, true);
+
+            assert.equal(await blockReward.read.nativeRewardUndistributed(), 0n);
+        });
+
+
+        it('should not exceed deltaPot and reinsertPot values in epoch rewards calculation', async function () {
+            const { blockReward, staking } = await helpers.loadFixture(deployContractsFixture);
+
+            await blockReward.write.addToDeltaPot({ value: parseEther("10") });
+            await blockReward.write.sendCoins({ value: parseEther("5") }); // fill reinsert pot
+
+            const deltaPotValue = await blockReward.read.deltaPot();
+            const reinsertPotValue = await blockReward.read.reinsertPot();
+
+            const fixedEpochEndTime = await staking.read.stakingFixedEpochEndTime();
+            await helpers.time.increaseTo(fixedEpochEndTime + 1n);
+            await helpers.mine(1);
+
+            const validatorsCount = 1_000_000n;
+            const shares = await blockReward.read.getPotsShares([validatorsCount]);
+
+            assert.equal(shares.deltaPotAmount, deltaPotValue);
+            assert.equal(shares.reinsertPotAmount, reinsertPotValue);
+            assert.equal(shares.totalRewards, deltaPotValue + reinsertPotValue);
+        });
+
+
+        it('should keep deltaPot value when no validators rewarded', async function () {
+            const {
+                blockReward,
+                staking,
+                validatorSet,
+                connectivityTracker,
+                initialValidators,
+            } = await helpers.loadFixture(deployContractsFixture);
+
+            const candidateMinStake = await staking.read.candidateMinStake();
+
+            for (const validator of initialValidators) {
+                const pool = validator.stakingAddress();
+
+                await staking.write.stake([pool], { account: validator.staking, value: candidateMinStake });
+
+                const latestBlock = await publicClient.getBlock();
+                await validatorSet.write.announceAvailability([latestBlock.number, latestBlock.hash], {
+                    account: validator.mining,
+                });
+
+                assert.equal(await staking.read.stakeAmountTotal([pool]), candidateMinStake);
+            }
+
+            await callReward(blockReward, true);
+            await blockReward.write.addToDeltaPot({ value: parseEther("10") });
+            const connectivityTrackerCaller = await impersonateAcc(connectivityTracker.address);
+
+            await helpers.setBalance(connectivityTracker.address, parseEther("10"));
+
+            const currentValidators = await validatorSet.read.getValidators();
+            for (const validatorAddress of currentValidators) {
+                await validatorSet.write.notifyUnavailability(
+                    [validatorAddress],
+                    { account: connectivityTrackerCaller },
+                );
+            }
+
+            await helpers.mine(5);
+
+            const deltaPotBefore = await blockReward.read.deltaPot();
+            const reinsertPotBefore = await blockReward.read.reinsertPot();
+            const balanceBefore = await publicClient.getBalance({ address: blockReward.address });
+
+            const fixedEpochEndTime = await staking.read.stakingFixedEpochEndTime();
+            await helpers.time.increaseTo(fixedEpochEndTime + 1n);
+            await helpers.mine(1);
+
+            await callReward(blockReward, true);
+
+            assert.equal(await blockReward.read.deltaPot(), deltaPotBefore);
+            assert.equal(await blockReward.read.reinsertPot(), reinsertPotBefore);
+            assert.equal(await publicClient.getBalance({ address: blockReward.address}), balanceBefore);
+        });
+
+
+        it('should put undistributed validators reward in reinsert pot', async () => {
+            const {
+                blockReward,
+                staking,
+                validatorSet,
+                connectivityTracker,
+                initialValidators,
+            } = await helpers.loadFixture(deployContractsFixture);
+
+            const candidateMinStake = await staking.read.candidateMinStake();
+
+            for (const validator of initialValidators) {
+                await staking.write.stake(
+                    [validator.stakingAddress()],
+                    { account: validator.staking, value: candidateMinStake },
+                );
+
+                const latestBlock = await publicClient.getBlock();
+                await validatorSet.write.announceAvailability([latestBlock.number, latestBlock.hash], {
+                    account: validator.mining,
+                });
+            }
+
+            await callReward(blockReward, true);
+            await blockReward.write.addToDeltaPot({ value: parseEther("10") });
+            const inactiveValidator = initialValidators[0];
+
+            const connectivityTrackerCaller = await impersonateAcc(connectivityTracker.address);
+            await helpers.setBalance(connectivityTracker.address, parseEther("10"));
+
+            await validatorSet.write.notifyUnavailability(
+                [inactiveValidator.miningAddress()],
+                { account: connectivityTrackerCaller },
+            );
+            await helpers.mine(5);
+
+            const announceBlock = await publicClient.getBlock();
+            await validatorSet.write.announceAvailability(
+                [announceBlock.number, announceBlock.hash],
+                { account: inactiveValidator.mining },
+            );
+
+            const fixedEpochEndTime = await staking.read.stakingFixedEpochEndTime();
+            await helpers.time.increaseTo(fixedEpochEndTime + 1n);
+            await helpers.mine(1);
+
+            const validators = await validatorSet.read.getValidators();
+            const potsShares = await blockReward.read.getPotsShares([BigInt(validators.length)]);
+            const poolReward = (potsShares.totalRewards - potsShares.governancePotAmount) / BigInt(validators.length);
+
+            const numRewarded = BigInt(validators.length) - 1n;
+            const distributedAmount = potsShares.governancePotAmount + numRewarded * poolReward;
+
+            const deltaPotBefore = await blockReward.read.deltaPot();
+            const reinsertPotBefore = await blockReward.read.reinsertPot();
+            const balanceBefore = await publicClient.getBalance({ address: blockReward.address });
+
+            await callReward(blockReward, true);
+
+            const deltaPotAfter = await blockReward.read.deltaPot();
+            const reinsertPotAfter = await blockReward.read.reinsertPot();
+            const balanceAfter = await publicClient.getBalance({ address: blockReward.address });
+
+            assert.equal(deltaPotBefore - deltaPotAfter, potsShares.deltaPotAmount);
+            assert.equal(balanceBefore - balanceAfter, distributedAmount);
+            assert.equal(balanceAfter, deltaPotAfter + reinsertPotAfter);
+
+            assert.ok(reinsertPotAfter > (reinsertPotBefore - potsShares.reinsertPotAmount));
         });
     });
 
